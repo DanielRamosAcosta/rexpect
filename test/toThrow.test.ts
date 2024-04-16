@@ -22,14 +22,9 @@ describe("toThrow", () => {
   it("throws an assertion error", () => {
     const fn = () => {}
 
-    let error = null
-    try {
-      expect(fn).toThrow()
-    } catch (e) {
-      error = e
-    }
+    const failingFn = () => expect(fn).toThrow()
 
-    assert(error instanceof AssertionError)
+    expect(failingFn).toThrow(AssertionError)
   })
 
   it("displays a meaningful message", () => {
