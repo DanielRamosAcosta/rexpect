@@ -18,7 +18,9 @@ export function expect(actual: unknown) {
       }
 
       if (expected) {
-        throw new Error(`expected error to be instance of ${expected.name}`)
+        if (typeof expected === "function") {
+          throw new Error(`expected error to be instance of ${expected.name}`)
+        }
       }
     }
   }
