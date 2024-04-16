@@ -67,15 +67,9 @@ describe("toThrow", () => {
         throw new Error("fail")
       }
 
-      let error = null as any as AssertionError
-      try {
-        expect(fn).toThrow(AssertionError)
-      } catch (e) {
-        error = e as any as AssertionError
-      }
+      const failingFn = () => expect(fn).toThrow(AssertionError)
 
-      assert.equal(
-        error.message,
+      expect(failingFn).toThrow(
         "expected error to be instance of AssertionError",
       )
     })
@@ -93,17 +87,9 @@ describe("toThrow", () => {
         throw new Error("fail")
       }
 
-      let error = null as any as SyntaxError
-      try {
-        expect(fn).toThrow(SyntaxError)
-      } catch (e) {
-        error = e as any as SyntaxError
-      }
+      const failingFn = () => expect(fn).toThrow(SyntaxError)
 
-      assert.equal(
-        error.message,
-        "expected error to be instance of SyntaxError",
-      )
+      expect(failingFn).toThrow("expected error to be instance of SyntaxError")
     })
   })
 
@@ -113,15 +99,9 @@ describe("toThrow", () => {
         throw new Error("hello")
       }
 
-      let error = null as any as AssertionError
-      try {
-        expect(fn).toThrow("world")
-      } catch (e) {
-        error = e as any as AssertionError
-      }
+      const failingFn = () => expect(fn).toThrow("world")
 
-      assert.equal(
-        error.message,
+      expect(failingFn).toThrow(
         "expected [Function fn] to throw error including 'world' but got 'hello'",
       )
     })
@@ -139,15 +119,9 @@ describe("toThrow", () => {
         throw new Error("error message")
       }
 
-      let error = null as any as AssertionError
-      try {
-        expect(fn).toThrow("expected message")
-      } catch (e) {
-        error = e as any as AssertionError
-      }
+      const failingFn = () => expect(fn).toThrow("expected message")
 
-      assert.equal(
-        error.message,
+      expect(failingFn).toThrow(
         "expected [Function fn] to throw error including 'expected message' but got 'error message'",
       )
     })
@@ -157,15 +131,9 @@ describe("toThrow", () => {
         throw new Error("error message")
       }
 
-      let error = null as any as AssertionError
-      try {
-        expect(hello).toThrow("expected message")
-      } catch (e) {
-        error = e as any as AssertionError
-      }
+      const failingFn = () => expect(hello).toThrow("expected message")
 
-      assert.equal(
-        error.message,
+      expect(failingFn).toThrow(
         "expected [Function hello] to throw error including 'expected message' but got 'error message'",
       )
     })
