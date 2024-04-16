@@ -23,6 +23,13 @@ export function expect(actual: unknown) {
             throw new Error(`expected error to be instance of ${expected.name}`)
           }
         }
+        if (typeof expected === "string") {
+          if (errorThrown.message !== expected) {
+            throw new Error(
+              `expected [Function ${actual.name}] to throw error including '${expected}' but got '${errorThrown.message}'`,
+            )
+          }
+        }
       }
     }
   }

@@ -109,4 +109,66 @@ describe("toThrow", () => {
 
     expect(fn).toThrow(Error)
   })
+
+  it("fails if given message is not the same", () => {
+    const fn = () => {
+      throw new Error("hello")
+    }
+
+    let error = null as any as AssertionError
+    try {
+      expect(fn).toThrow("world")
+    } catch (e) {
+      error = e as any as AssertionError
+    }
+
+    assert.equal(
+      error.message,
+      "expected [Function fn] to throw error including 'world' but got 'hello'",
+    )
+  })
+
+  it("does not fail if message is the same", () => {
+    const fn = () => {
+      throw new Error("hello")
+    }
+
+    expect(fn).toThrow("hello")
+  })
+
+  it("prints the right message in the test", () => {
+    const fn = () => {
+      throw new Error("error message")
+    }
+
+    let error = null as any as AssertionError
+    try {
+      expect(fn).toThrow("expected message")
+    } catch (e) {
+      error = e as any as AssertionError
+    }
+
+    assert.equal(
+      error.message,
+      "expected [Function fn] to throw error including 'expected message' but got 'error message'",
+    )
+  })
+
+  it("prints the right function name", () => {
+    const hello = () => {
+      throw new Error("error message")
+    }
+
+    let error = null as any as AssertionError
+    try {
+      expect(hello).toThrow("expected message")
+    } catch (e) {
+      error = e as any as AssertionError
+    }
+
+    assert.equal(
+      error.message,
+      "expected [Function hello] to throw error including 'expected message' but got 'error message'",
+    )
+  })
 })
