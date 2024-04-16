@@ -6,9 +6,7 @@ describe("toThrow", () => {
   it("throws if given function does not throw", () => {
     const fn = () => {}
 
-    assert.throws(() => {
-      expect(fn).toThrow()
-    })
+    expect(() => expect(fn).toThrow()).toThrow()
   })
 
   it("does not throw if given function does throws", () => {
