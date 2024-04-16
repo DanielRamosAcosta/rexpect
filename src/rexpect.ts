@@ -1,0 +1,18 @@
+export function expect(actual: unknown) {
+  return {
+    toThrow() {
+      if (typeof actual === "function") {
+        let hasThrown = false
+        try {
+          actual()
+        } catch (error) {
+          hasThrown = true
+        }
+
+        if (!hasThrown) {
+          throw new Error("someerror")
+        }
+      }
+    },
+  }
+}
