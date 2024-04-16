@@ -1,5 +1,6 @@
 import { it, describe } from "node:test"
 import { expect } from "../src/rexpect.js"
+import { AssertionError } from "node:assert"
 
 describe("toThrow", () => {
   it("throws if given function does not throw", () => {
@@ -23,5 +24,20 @@ describe("toThrow", () => {
     }
 
     expect(fn).toThrow()
+  })
+
+  it("throws an assertion error", () => {
+    const fn = () => {}
+
+    let error = null
+    try {
+      expect(fn).toThrow()
+    } catch (e) {
+      error = e
+    }
+
+    if (!(error instanceof AssertionError)) {
+      throw new Error("It should have thrown an AssertionError")
+    }
   })
 })

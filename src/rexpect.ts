@@ -1,3 +1,5 @@
+import { AssertionError } from "node:assert"
+
 export function expect(actual: unknown) {
   return {
     toThrow() {
@@ -10,7 +12,9 @@ export function expect(actual: unknown) {
         }
 
         if (!hasThrown) {
-          throw new Error("someerror")
+          throw new AssertionError({
+            message: "annymessage",
+          })
         }
       }
     },
