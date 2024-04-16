@@ -44,4 +44,25 @@ describe("toThrow", () => {
 
     assert.equal(error.message, "expected [Function fn] to throw an error")
   })
+
+  it("does not show the full stacktrace", () => {
+    const fn = () => {}
+
+    let error = null as any as AssertionError
+    try {
+      expect(fn).toThrow()
+    } catch (e) {
+      error = e as any as AssertionError
+    }
+
+    const expectedStack = `AssertionError [ERR_ASSERTION]: expected [Function fn] to throw an error
+    at TestContext.<anonymous> (file:///Users/danielramos/Documents/repos/mines/rexpect/test/toThrow.test.ts:48:24)
+    at Test.runInAsyncScope (node:async_hooks:206:9)
+    at Test.run (node:internal/test_runner/test:639:25)
+    at Suite.processPendingSubtests (node:internal/test_runner/test:382:18)
+    at Test.postRun (node:internal/test_runner/test:730:19)
+    at Test.run (node:internal/test_runner/test:688:12)
+    at async Suite.processPendingSubtests (node:internal/test_runner/test:382:7)`
+    assert.equal(error.stack, expectedStack)
+  })
 })
