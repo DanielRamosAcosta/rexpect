@@ -13,7 +13,7 @@ export function expect(actual: unknown) {
 
         if (!hasThrown) {
           throw new AssertionError({
-            message: "annymessage",
+            message: `expected [Function fn] to throw an error`,
           })
         }
       }

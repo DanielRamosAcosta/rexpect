@@ -31,4 +31,17 @@ describe("toThrow", () => {
 
     assert(error instanceof AssertionError)
   })
+
+  it("displays a meaningful message", () => {
+    const fn = () => {}
+
+    let error = null as any as AssertionError
+    try {
+      expect(fn).toThrow()
+    } catch (e) {
+      error = e as any as AssertionError
+    }
+
+    assert.equal(error.message, "expected [Function fn] to throw an error")
+  })
 })
