@@ -1,7 +1,7 @@
 import { AssertionError } from "node:assert"
 
 export function expect(actual: unknown) {
-  let toThrow = function (expected?: unknown) {
+  const toThrow = function (expected?: unknown) {
     if (typeof actual === "function") {
       let errorThrown = null as any as Error
       try {
