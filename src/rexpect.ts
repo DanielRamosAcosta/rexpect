@@ -12,7 +12,7 @@ export function expect(actual: unknown) {
 
       if (!hasThrown) {
         throw new AssertionError({
-          message: `expected [Function fn] to throw an error`,
+          message: `expected [Function ${actual.name}] to throw an error`,
           stackStartFn: toThrow,
         })
       }
