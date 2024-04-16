@@ -22,7 +22,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf coverage dist tmp",
-    "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && tsc -p tsconfig.types.json && ./fixup",
+    "build": "tsc -p tsconfig.esm.json && tsc -p fooo/tsconfig.cjs.json && tsc -p tsconfig.types.json && ./fixup",
     "lint": "eslint --ext .ts ./src",
     "lint:fix": "eslint --ext .ts --fix ./src",
     "typecheck": "tsc --noEmit",
