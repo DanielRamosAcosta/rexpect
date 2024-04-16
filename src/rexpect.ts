@@ -1,12 +1,14 @@
-import assert, { AssertionError } from "node:assert"
+import { AssertionError } from "node:assert"
 
 export function expect(actual: unknown) {
   let toThrow = function (expected?: unknown) {
     if (typeof actual === "function") {
+      let errorThrown = null as any as Error
       let hasThrown = false
       try {
         actual()
       } catch (error) {
+        errorThrown = error
         hasThrown = true
       }
 
@@ -19,7 +21,9 @@ export function expect(actual: unknown) {
 
       if (expected) {
         if (typeof expected === "function") {
-          throw new Error(`expected error to be instance of ${expected.name}`)
+          if (!(errorThrown instanceof expected)) {
+            throw new Error(`expected error to be instance of ${expected.name}`)
+          }
         }
       }
     }

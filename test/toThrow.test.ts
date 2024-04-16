@@ -106,4 +106,12 @@ describe("toThrow", () => {
 
     assert.equal(error.message, "expected error to be instance of SyntaxError")
   })
+
+  it("does not fail if error is the same", () => {
+    const fn = () => {
+      throw new Error("fail")
+    }
+
+    expect(fn).toThrow(Error)
+  })
 })
