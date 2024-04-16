@@ -4,15 +4,13 @@ export function expect(actual: unknown) {
   let toThrow = function (expected?: unknown) {
     if (typeof actual === "function") {
       let errorThrown = null as any as Error
-      let hasThrown = false
       try {
         actual()
       } catch (error) {
-        errorThrown = error
-        hasThrown = true
+        errorThrown = error as any as Error
       }
 
-      if (!hasThrown) {
+      if (!errorThrown) {
         throw new AssertionError({
           message: `expected [Function ${actual.name}] to throw an error`,
           stackStartFn: toThrow,
