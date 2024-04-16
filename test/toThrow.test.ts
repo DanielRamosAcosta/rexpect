@@ -76,4 +76,37 @@ describe("toThrow", () => {
     at async Suite.processPendingSubtests (node:internal/test_runner/test:382:7)`
     assert.equal(error.stack, expectedStack)
   })
+
+  it("fails if the instance of the error is not the same", () => {
+    const fn = () => {
+      throw new Error("fail")
+    }
+
+    let error = null as any as AssertionError
+    try {
+      expect(fn).toThrow(AssertionError)
+    } catch (e) {
+      error = e as any as AssertionError
+    }
+
+    assert.equal(
+      error.message,
+      "expected error to be instance of AssertionError",
+    )
+  })
+
+  it("prints the name of the expected error", () => {
+    const fn = () => {
+      throw new Error("fail")
+    }
+
+    let error = null as any as SyntaxError
+    try {
+      expect(fn).toThrow(SyntaxError)
+    } catch (e) {
+      error = e as any as SyntaxError
+    }
+
+    assert.equal(error.message, "expected error to be instance of SyntaxError")
+  })
 })
