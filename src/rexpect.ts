@@ -1,41 +1,58 @@
 import { AssertionError } from "node:assert"
 
-function toThrowPrivate(actual: any, expected: any, root: any) {
-  if (typeof actual === "function") {
-    let errorThrown = null as any as Error
-    try {
-      actual()
-    } catch (error) {
-      errorThrown = error as any as Error
-    }
+type Expector = (
+  actual?: any,
+) => (expected?: any) => (stackStartFn: any) => void
 
-    if (!errorThrown) {
-      throw new AssertionError({
-        message: `expected [Function ${actual.name}] to throw an error`,
-        stackStartFn: root,
-      })
-    }
+type Expectors<T extends string> = Record<T, Expector>
 
-    if (expected) {
-      if (typeof expected === "function") {
-        if (!(errorThrown instanceof expected)) {
-          throw new Error(`expected error to be instance of ${expected.name}`)
-        }
-      }
-      if (typeof expected === "string") {
-        if (errorThrown.message !== expected) {
-          throw new Error(
-            `expected [Function ${actual.name}] to throw error including '${expected}' but got '${errorThrown.message}'`,
-          )
-        }
-      }
+function createExpect<T extends string>(expectors: Expectors<T>) {
+  return function (actual: unknown) {
+    // @ts-ignore
+    const toThrow = expectors.toThrow(actual)
+
+    return {
+      toThrow: toThrow(toThrow),
     }
   }
 }
 
-export function expect(actual: unknown) {
-  const toThrow = (expected?: any) => toThrowPrivate(actual, expected, toThrow)
-  return {
-    toThrow,
-  }
-}
+export const expect = createExpect({
+  toThrow:
+    (actual: () => unknown) =>
+    (stackStartFn) =>
+    (expected?: ErrorConstructor | string) => {
+      if (typeof actual === "function") {
+        let errorThrown = null as any as Error
+        try {
+          actual()
+        } catch (error) {
+          errorThrown = error as any as Error
+        }
+
+        if (!errorThrown) {
+          throw new AssertionError({
+            message: `expected [Function ${actual.name}] to throw an error`,
+            stackStartFn,
+          })
+        }
+
+        if (expected) {
+          if (typeof expected === "function") {
+            if (!(errorThrown instanceof expected)) {
+              throw new Error(
+                `expected error to be instance of ${expected.name}`,
+              )
+            }
+          }
+          if (typeof expected === "string") {
+            if (errorThrown.message !== expected) {
+              throw new Error(
+                `expected [Function ${actual.name}] to throw error including '${expected}' but got '${errorThrown.message}'`,
+              )
+            }
+          }
+        }
+      }
+    },
+})
