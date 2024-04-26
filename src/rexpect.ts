@@ -10,11 +10,13 @@ function toEntries<T extends object>(obj: T): Entries<T> {
 
 type StackStartFn = (fn: () => void) => void
 
-type Expectation<T> = (actual: unknown) => (stackStartFn: StackStartFn) => T
+type BadExpectation<T> = (actual: unknown) => (stackStartFn: StackStartFn) => T
+
+type Expectation<Expected> = BadExpectation<(expected: Expected) => void>
 
 function createExpect<
   Obj extends {
-    [K in keyof Obj]: Expectation<ReturnType<ReturnType<Obj[K]>>>
+    [K in keyof Obj]: BadExpectation<ReturnType<ReturnType<Obj[K]>>>
   },
 >(
   expectations: Obj,
@@ -32,9 +34,7 @@ function createExpect<
   }
 }
 
-type RealExpectation<Expected> = Expectation<(expected: Expected) => void>
-
-const toThrow: RealExpectation<ErrorConstructor | string> =
+const toThrow: Expectation<ErrorConstructor | string> =
   (actual) => (stackStartFn) => (expected) => {
     if (typeof actual === "function") {
       let errorThrown = null as any as Error
