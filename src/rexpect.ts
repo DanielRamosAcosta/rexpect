@@ -8,15 +8,19 @@ function toEntries<T extends object>(obj: T): Entries<T> {
   return Object.entries(obj) as any
 }
 
-type Expectation = (
-  actual: any,
-) => (stackStartFn: any) => (expected?: any) => void
-
-type ExpectObject<Obj> = Record<keyof Obj, (expected?: any) => void>
-
-function createExpect<Obj>(
-  expectations: Record<keyof Obj, Expectation>,
-): (actual: any) => ExpectObject<Obj> {
+function createExpect<
+  Obj extends {
+    [K in keyof Obj]: (
+      actual: unknown,
+    ) => (
+      stackStartFn: (fn: () => void) => void,
+    ) => ReturnType<ReturnType<Obj[K]>>
+  },
+>(
+  expectations: Obj,
+): (actual: unknown) => {
+  [K in keyof Obj]: ReturnType<ReturnType<Obj[K]>>
+} {
   return function (actual: any) {
     const expectationEntries = toEntries(expectations)
 
@@ -24,13 +28,13 @@ function createExpect<Obj>(
       .map(([key, value]) => [key, value(actual)] as const)
       .map(([key, fn]) => [key, fn(fn)] as const)
 
-    return Object.fromEntries(entries) as ExpectObject<Obj>
+    return Object.fromEntries(entries) as any
   }
 }
 
 export const expect = createExpect({
   toThrow:
-    (actual: () => unknown) =>
+    (actual: unknown) =>
     (stackStartFn) =>
     (expected?: ErrorConstructor | string) => {
       if (typeof actual === "function") {
@@ -68,4 +72,4 @@ export const expect = createExpect({
     },
 })
 
-expect(2).toThrow(3)
+expect(2).toThrow("3")
