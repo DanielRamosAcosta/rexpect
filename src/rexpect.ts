@@ -1,19 +1,30 @@
 import { AssertionError } from "node:assert"
 
-type Expector = (
-  actual?: any,
-) => (expected?: any) => (stackStartFn: any) => void
+type Entries<T> = {
+  [K in keyof T]: [K, T[K]]
+}[keyof T][]
 
-type Expectors<T extends string> = Record<T, Expector>
+function toEntries<T extends object>(obj: T): Entries<T> {
+  return Object.entries(obj) as any
+}
 
-function createExpect<T extends string>(expectors: Expectors<T>) {
-  return function (actual: unknown) {
-    // @ts-ignore
-    const toThrow = expectors.toThrow(actual)
+type Expectation = (
+  actual: any,
+) => (stackStartFn: any) => (expected?: any) => void
 
-    return {
-      toThrow: toThrow(toThrow),
-    }
+type ExpectObject<Obj> = Record<keyof Obj, (expected?: any) => void>
+
+function createExpect<Obj>(
+  expectations: Record<keyof Obj, Expectation>,
+): (actual: any) => ExpectObject<Obj> {
+  return function (actual: any) {
+    const expectationEntries = toEntries(expectations)
+
+    const entries = expectationEntries
+      .map(([key, value]) => [key, value(actual)] as const)
+      .map(([key, fn]) => [key, fn(fn)] as const)
+
+    return Object.fromEntries(entries) as ExpectObject<Obj>
   }
 }
 
@@ -56,3 +67,5 @@ export const expect = createExpect({
       }
     },
 })
+
+expect(2).toThrow(3)
