@@ -32,44 +32,44 @@ function createExpect<
   }
 }
 
-export const expect = createExpect({
-  toThrow:
-    (actual: unknown) =>
-    (stackStartFn) =>
-    (expected?: ErrorConstructor | string) => {
-      if (typeof actual === "function") {
-        let errorThrown = null as any as Error
-        try {
-          actual()
-        } catch (error) {
-          errorThrown = error as any as Error
-        }
+type RealExpectation<Expected> = Expectation<(expected: Expected) => void>
 
-        if (!errorThrown) {
-          throw new AssertionError({
-            message: `expected [Function ${actual.name}] to throw an error`,
-            stackStartFn,
-          })
-        }
+const toThrow: RealExpectation<ErrorConstructor | string> =
+  (actual) => (stackStartFn) => (expected) => {
+    if (typeof actual === "function") {
+      let errorThrown = null as any as Error
+      try {
+        actual()
+      } catch (error) {
+        errorThrown = error as any as Error
+      }
 
-        if (expected) {
-          if (typeof expected === "function") {
-            if (!(errorThrown instanceof expected)) {
-              throw new Error(
-                `expected error to be instance of ${expected.name}`,
-              )
-            }
+      if (!errorThrown) {
+        throw new AssertionError({
+          message: `expected [Function ${actual.name}] to throw an error`,
+          stackStartFn,
+        })
+      }
+
+      if (expected) {
+        if (typeof expected === "function") {
+          if (!(errorThrown instanceof expected)) {
+            throw new Error(`expected error to be instance of ${expected.name}`)
           }
-          if (typeof expected === "string") {
-            if (errorThrown.message !== expected) {
-              throw new Error(
-                `expected [Function ${actual.name}] to throw error including '${expected}' but got '${errorThrown.message}'`,
-              )
-            }
+        }
+        if (typeof expected === "string") {
+          if (errorThrown.message !== expected) {
+            throw new Error(
+              `expected [Function ${actual.name}] to throw error including '${expected}' but got '${errorThrown.message}'`,
+            )
           }
         }
       }
-    },
+    }
+  }
+
+export const expect = createExpect({
+  toThrow,
 })
 
-expect(2).toThrow("3")
+expect(2).toThrow("")
