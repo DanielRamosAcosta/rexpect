@@ -8,13 +8,13 @@ function toEntries<T extends object>(obj: T): Entries<T> {
   return Object.entries(obj) as any
 }
 
+type StackStartFn = (fn: () => void) => void
+
+type Expectation<T> = (actual: unknown) => (stackStartFn: StackStartFn) => T
+
 function createExpect<
   Obj extends {
-    [K in keyof Obj]: (
-      actual: unknown,
-    ) => (
-      stackStartFn: (fn: () => void) => void,
-    ) => ReturnType<ReturnType<Obj[K]>>
+    [K in keyof Obj]: Expectation<ReturnType<ReturnType<Obj[K]>>>
   },
 >(
   expectations: Obj,
