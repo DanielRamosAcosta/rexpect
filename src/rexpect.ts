@@ -71,6 +71,3 @@ const toThrow: Expectation<ErrorConstructor | string> =
 export const expect = createExpect({
   toThrow,
 })
-
-expect(2).toThrow("3123")
-expect(2).toThrow(3123)
