@@ -10,13 +10,13 @@ function toEntries<T extends object>(obj: T): Entries<T> {
 
 type StackStartFn = (fn: () => void) => void
 
-type BadExpectation<T> = (actual: unknown) => (stackStartFn: StackStartFn) => T
-
-type Expectation<Expected> = BadExpectation<(expected: Expected) => void>
+type Expectation<Expected> = (
+  actual: unknown,
+) => (stackStartFn: StackStartFn) => (expected: Expected) => void
 
 function createExpect<
   Obj extends {
-    [K in keyof Obj]: BadExpectation<ReturnType<ReturnType<Obj[K]>>>
+    [K in keyof Obj]: Expectation<Parameters<ReturnType<ReturnType<Obj[K]>>>[0]>
   },
 >(
   expectations: Obj,
@@ -72,4 +72,5 @@ export const expect = createExpect({
   toThrow,
 })
 
-expect(2).toThrow("")
+expect(2).toThrow("3123")
+expect(2).toThrow(3123)
